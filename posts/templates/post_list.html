@@ -1,0 +1,15 @@
+<form action="." method="post">
+    {% csrf_token %}
+    {{ form.title }}
+    {{ form.url}}
+    <button type="submit">Submit</button>
+</form>
+
+<ul>
+    {% spaceless %}
+        {% for post in posts %}
+            <li><a href="{{ post.url }}" target="_blank">{{ post.title }}</a></li>
+        {% endfor %}
+    {% endspaceless %}
+</ul>
+

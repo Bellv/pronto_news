@@ -1,17 +1,32 @@
-from django.http import HttpResponse
-from django.views import View
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import TemplateView
 from django.shortcuts import render
+from django.urls import reverse
 
+from .forms import PostForm
 from .models import Post
 
-class PostListView(View):
+
+class PostListView(TemplateView):
+    template_name ='post_list.html'
+
     def get(self, request):
         posts = Post.objects.all()
-        html = '<ul>'
-        for post in posts:
-            html += f'<li><a href="{post.url}" target="_blank">' \
-                f'{post.title}</a></li>'
-        
-        html += '</ul>'
+        form = PostForm()
 
-        return HttpResponse(html)
+        return render(
+            request,
+            self.template_name,
+            {
+                'posts': posts,
+                'form': form
+            }
+        )
+
+    def post(self, request):
+        form = PostForm(request.POST)
+        form.save()
+        
+        return HttpResponseRedirect(
+            reverse('post_list')
+        )
